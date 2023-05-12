@@ -1,11 +1,13 @@
-import 'package:adv_basics/data/questions.dart';
-import 'package:adv_basics/questions_summary.dart';
 import 'package:flutter/material.dart';
+import 'package:adv_basics/data/questions.dart';
+import 'package:adv_basics/questions_summary/questions_summary.dart';
 
 class ResultScreen extends StatelessWidget {
-  const ResultScreen({super.key, required this.chosenQuestions});
+  const ResultScreen({super.key, required this.chosenQuestions, required this.onRestart});
 
   final List<String> chosenQuestions;
+
+  final void Function() onRestart;
 
   List<Map<String, Object>> getSummaryData() {
     final List<Map<String, Object>> summary = [];
@@ -18,7 +20,6 @@ class ResultScreen extends StatelessWidget {
         'user_answer': chosenQuestions[i]
       });
     }
-
     return summary;
   }
 
@@ -26,10 +27,9 @@ class ResultScreen extends StatelessWidget {
   Widget build(context) {
     final summaryData = getSummaryData();
     final numTotalQuestions = questions.length;
-    final numCorrectQuestions = summaryData.where((data){
+    final numCorrectQuestions = summaryData.where((data) {
       return data['user_answer'] == data['correct_answer'];
     }).length;
-
 
     return SizedBox(
       width: double.infinity,
@@ -38,7 +38,7 @@ class ResultScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-             Text(
+            Text(
               'You answered $numCorrectQuestions out of $numTotalQuestions questions correctly!',
               style: const TextStyle(fontSize: 20, color: Colors.white),
               textAlign: TextAlign.center,
@@ -46,10 +46,17 @@ class ResultScreen extends StatelessWidget {
             const SizedBox(height: 30),
             QuestionsSummary(summaryData),
             const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Restart Quiz'),
-            ),
+            TextButton.icon(
+                onPressed: onRestart,
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white
+                ),
+                icon: const Icon(Icons.refresh),
+                label: const Text('Restart Quiz'))
+            // ElevatedButton(
+            //   onPressed: () {},
+            //   child: const Text('Restart Quiz'),
+            // ),
           ],
         ),
       ),
